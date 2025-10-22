@@ -69,6 +69,17 @@ static int split_keyboard_event(struct hid_device *hid, struct hid_field *field,
 	struct usb_device *dev = hid_to_usb_dev(hid);
 	bool right = dev->devpath[strlen(dev->devpath) - 1] & 1;
 	u16 k = keymap[right][u->code];
+	static bool drop;
+
+	// drop redundant events
+	if (u->code == 70) {
+		if (!value)
+			drop ^= true;
+		pr_devel("%d %d %d\n", u->code, value, drop);
+		if (drop)
+			return 0;
+	}
+
 	if (k)
 		pr_devel("%d %d -> %d\n", u->code, value, k);
 	if (k == KEY_RECORD + KEY_STOP)
