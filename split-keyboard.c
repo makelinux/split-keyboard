@@ -10,7 +10,7 @@ u16 keys[2][48] = {
 		KEY_MACRO7, KEY_MACRO8, KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,
 		KEY_CAPSLOCK, KEY_MACRO9, KEY_BACKSLASH, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,
 		KEY_MACRO10, KEY_MACRO11, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,
-		KEY_MACRO12, KEY_STOP,
+		KEY_RECORD + KEY_STOP, KEY_MACRO12,
 			KEY_LEFTCTRL, KEY_LEFTMETA, KEY_COMPOSE, KEY_LEFTALT, KEY_SPACE, KEY_SPACE,
 		// KEY_STOP -> Cancel
 		// KEY_STOPCD -> Audio stop, but is not invoked
@@ -41,15 +41,15 @@ static int ptt(struct input_dev *id, s32 value)
 static int macro(struct input_dev *id, int f, s32 value)
 {
 	if (value) {
-		input_report_key(id, KEY_LEFTALT, 1);
 		input_report_key(id, KEY_LEFTCTRL, 1);
+		input_report_key(id, KEY_LEFTALT, 1);
 		input_report_key(id, KEY_LEFTSHIFT, 1);
 		input_report_key(id, f, 1);
 	} else {
 		input_report_key(id, f, 0);
 		input_report_key(id, KEY_LEFTSHIFT, 0);
-		input_report_key(id, KEY_LEFTCTRL, 0);
 		input_report_key(id, KEY_LEFTALT, 0);
+		input_report_key(id, KEY_LEFTCTRL, 0);
 		input_report_key(id, KEY_MACRO_RECORD_START, 0);
 		//input_report_key(id, KEY_MACRO_RECORD_STOP, 1);
 		//input_report_key(id, KEY_MACRO_RECORD_STOP, 0);
@@ -71,10 +71,10 @@ static int split_keyboard_event(struct hid_device *hid, struct hid_field *field,
 	u16 k = keymap[right][u->code];
 	if (k)
 		pr_devel("%d %d -> %d\n", u->code, value, k);
+	if (k == KEY_RECORD + KEY_STOP)
+		return ptt(id, value);
 	if (k >= KEY_MACRO1 &&
 		k <= KEY_MACRO12) {
-		if (k == KEY_MACRO12)
-			return ptt(id, value);
 		int f = k - KEY_MACRO1 + KEY_F1;
 		return macro(id, f, value);
 	}

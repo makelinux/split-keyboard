@@ -17,28 +17,28 @@ The driver remaps the OEM keys to provide the following layouts:
 |          |        |        |       |     |      |     |     |
 |----------|--------|--------|-------|-----|------|-----|-----|
 | ESC      | Print  | Delete | F1    | F2  | F3   | F4  | F5  |
-| Macro5   | Macro6 | `      | 1     | 2   | 3    | 4   | 5   |
-| Macro7   | Macro8 | Tab    | Q     | W   | E    | R   | T   |
-| CapsLock | Macro6 | \      | A     | S   | D    | F   | G   |
-| Macro7   | Record | LShift | Z     | X   | C    | V   | B   |
-| Rec/Stop | Stop   | LCtrl  | LMeta | Cmp | LAlt | Spc | Spc |
+| CAS-F5   | CAS-F6 | `      | 1     | 2   | 3    | 4   | 5   |
+| CAS-F7   | CAS-F8 | Tab    | Q     | W   | E    | R   | T   |
+| CapsLock | CAS-F9 | \      | A     | S   | D    | F   | G   |
+| CAS-F10  | CAS-F11| LShift | Z     | X   | C    | V   | B   |
+| Rec/Stop | CAS-F12| LCtrl  | LMeta | Cmp | LAlt | Spc | Spc |
 
 #### Right keyboard
 
-|     |        |     |       |         |      |       |        |
-|-----|--------|-----|-------|---------|------|-------|--------|
-| F6  | F7     | F8  | F9    | F10     | F11  | F12   | Insert |
-| 6   | 7      | 8   | 9     | 0       | -    | =     | BS     |
-| Y   | U      | I   | O     | P       | [    | ]     | PgUp   |
-| H   | J      | K   | L     | ;       | '    | Enter | PgDn   |
-| N   | M      | ,   | .     | /       | Home | ↑     | End    |
-| Spc | RAlt   | Cmp | RCtrl | RShift  | ←    | ↓     | →      |
+|     |      |     |       |        |      |       |        |
+|-----|------|-----|-------|--------|------|-------|--------|
+| F6  | F7   | F8  | F9    | F10    | F11  | F12   | Insert |
+| 6   | 7    | 8   | 9     | 0      | -    | =     | BS     |
+| Y   | U    | I   | O     | P      | [    | ]     | PgUp   |
+| H   | J    | K   | L     | ;      | '    | Enter | PgDn   |
+| N   | M    | ,   | .     | /      | Home | ↑     | End    |
+| Spc | RAlt | Cmp | RCtrl | RShift | ←    | ↓     | →      |
 
 ## Special keys
 
-### Macro keys
-- **Macro1-Macro8**: Trigger Alt+Ctrl+Shift+F[n] combinations
-- **Macro9**: Push-to-Talk (PTT) function
+### CAS-F keys
+- CAS = Ctrl+Alt+Shift+
+- Rec/Stop
   - Press: sends RECORD key
   - Release: sends STOP key
 
