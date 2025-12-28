@@ -8,8 +8,8 @@ u16 keys[2][48] = {
 		KEY_ESC, KEY_PRINT, KEY_DELETE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,
 		KEY_MACRO5, KEY_MACRO6, KEY_GRAVE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5,
 		KEY_MACRO7, KEY_MACRO8, KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,
-		KEY_CAPSLOCK, KEY_MACRO9, KEY_BACKSLASH, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,
-		KEY_MACRO10, KEY_MACRO11, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,
+		KEY_MACRO9, KEY_MACRO10, KEY_BACKSLASH, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,
+		KEY_MACRO11, KEY_MACRO12, KEY_LEFTSHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,
 		KEY_RECORD + KEY_STOP, KEY_MACRO12,
 			KEY_LEFTCTRL, KEY_LEFTMETA, KEY_COMPOSE, KEY_LEFTALT, KEY_SPACE, KEY_SPACE,
 		// KEY_STOP -> Cancel
@@ -25,6 +25,34 @@ u16 keys[2][48] = {
 			KEY_COMPOSE, KEY_RIGHTCTRL, KEY_RIGHTSHIFT, KEY_LEFT, KEY_DOWN, KEY_RIGHT,
 	}
 };
+
+static bool handle_caps_lock(struct input_dev *id, u16 key, bool pressed)
+{
+	static union {
+		struct {
+			u8 left:1;
+			u8 right:1;
+		};
+		u8 both;
+	} shift_state;
+
+	if (key != KEY_LEFTSHIFT && key != KEY_RIGHTSHIFT)
+		return false;
+
+	u8 old_both = shift_state.both;
+
+	if (key == KEY_LEFTSHIFT)
+		shift_state.left = pressed;
+	else
+		shift_state.right = pressed;
+
+	if (shift_state.both == 3 && old_both != 3) {
+		input_report_key(id, KEY_CAPSLOCK, 1);
+		input_report_key(id, KEY_CAPSLOCK, 0);
+	}
+
+	return true;
+}
 
 static int ptt(struct input_dev *id, s32 value)
 {
@@ -82,6 +110,9 @@ static int split_keyboard_event(struct hid_device *hid, struct hid_field *field,
 
 	if (k)
 		pr_devel("%d %d -> %d\n", u->code, value, k);
+
+	handle_caps_lock(id, k, value);
+
 	if (k == KEY_RECORD + KEY_STOP)
 		return ptt(id, value);
 	if (k >= KEY_MACRO1 &&
@@ -122,6 +153,7 @@ static int input_configured(struct hid_device *hid,
 	id->ledbit[0] = BIT_MASK(LED_NUML) | BIT_MASK(LED_CAPSL) |
 		BIT_MASK(LED_SCROLLL) | BIT_MASK(LED_COMPOSE);
 
+	input_set_capability(id, EV_KEY, KEY_CAPSLOCK);
 	return 0;
 }
 

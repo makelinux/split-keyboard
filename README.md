@@ -14,14 +14,14 @@ The driver remaps the OEM keys to provide the following layouts:
 
 #### Left keyboard
 
-|          |        |        |       |     |      |     |     |
-|----------|--------|--------|-------|-----|------|-----|-----|
-| ESC      | Print  | Delete | F1    | F2  | F3   | F4  | F5  |
-| CAS-F5   | CAS-F6 | `      | 1     | 2   | 3    | 4   | 5   |
-| CAS-F7   | CAS-F8 | Tab    | Q     | W   | E    | R   | T   |
-| CapsLock | CAS-F9 | \      | A     | S   | D    | F   | G   |
-| CAS-F10  | CAS-F11| LShift | Z     | X   | C    | V   | B   |
-| Rec/Stop | CAS-F12| LCtrl  | LMeta | Cmp | LAlt | Spc | Spc |
+|          |         |        |       |     |      |     |     |
+|----------|---------|--------|-------|-----|------|-----|-----|
+| ESC      | Print   | Delete | F1    | F2  | F3   | F4  | F5  |
+| CAS-F5   | CAS-F6  | `      | 1     | 2   | 3    | 4   | 5   |
+| CAS-F7   | CAS-F8  | Tab    | Q     | W   | E    | R   | T   |
+| CAS-F9   | CAS-F10 | \      | A     | S   | D    | F   | G   |
+| CAS-F11  | CAS-F12 | LShift | Z     | X   | C    | V   | B   |
+| Rec/Stop | CAS-F12 | LCtrl  | LMeta | Cmp | LAlt | Spc | Spc |
 
 #### Right keyboard
 
@@ -38,14 +38,18 @@ The driver remaps the OEM keys to provide the following layouts:
 
 ### CAS-F keys
 - CAS = Ctrl+Alt+Shift+
-- Rec/Stop
-  - Press: sends RECORD key
-  - Release: sends STOP key
+
+### Rec/Stop
+- Press: sends RECORD key
+- Release: sends STOP key
 
 ### Function keys
 - **Record**: Used for PTT press event
 - **Stop**: Used for PTT release event
 - **Compose**: Available on both halves
+
+### Double Shift → Caps Lock
+- Press both LEFT SHIFT and RIGHT SHIFT simultaneously to toggle Caps Lock
 
 ## Installation
 
