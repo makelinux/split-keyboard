@@ -3,7 +3,7 @@
 #include <linux/module.h>
 #include <linux/usb.h>
 
-u16 keys[2][48] = {
+u16 keys[][48] = {
 	{
 		KEY_ESC, KEY_PRINT, KEY_DELETE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,
 		KEY_MACRO5, KEY_MACRO6, KEY_GRAVE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5,
@@ -23,6 +23,10 @@ u16 keys[2][48] = {
 		KEY_N, KEY_M, KEY_COMMA, KEY_DOT, KEY_SLASH, KEY_HOME, KEY_UP, KEY_END,
 		KEY_SPACE, KEY_RIGHTALT,
 			KEY_COMPOSE, KEY_RIGHTCTRL, KEY_RIGHTSHIFT, KEY_LEFT, KEY_DOWN, KEY_RIGHT,
+	},
+	{
+		/* Additional keys that need to be registered but aren't mapped to physical keys */
+		KEY_CAPSLOCK, KEY_RECORD, KEY_STOP
 	}
 };
 
@@ -56,6 +60,8 @@ static bool handle_caps_lock(struct input_dev *id, u16 key, bool pressed)
 
 static int ptt(struct input_dev *id, s32 value)
 {
+	pr_devel("PTT %d\n", value);
+
 	if (value) {
 		input_report_key(id, KEY_RECORD, 1);
 		input_report_key(id, KEY_RECORD, 0);
@@ -153,7 +159,9 @@ static int input_configured(struct hid_device *hid,
 	id->ledbit[0] = BIT_MASK(LED_NUML) | BIT_MASK(LED_CAPSL) |
 		BIT_MASK(LED_SCROLLL) | BIT_MASK(LED_COMPOSE);
 
-	input_set_capability(id, EV_KEY, KEY_CAPSLOCK);
+	for (int i = 0; keys[2][i] && i < 48; i++)
+		input_set_capability(id, EV_KEY, keys[2][i]);
+
 	return 0;
 }
 
