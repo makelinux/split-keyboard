@@ -47,6 +47,66 @@ The driver remaps the OEM keys to provide the following layouts:
 - **Stop**: Used for PTT release event
 - **Compose**: Available on both halves
 
+## Installation
+
+### Build and Install
+```bash
+# Build the module
+make
+
+# Install to system modules directory
+sudo make modules_install
+
+# Load the module
+sudo modprobe split-keyboard
+```
+
+### Auto-load on Boot
+
+#### Method 1: Using /etc/modules-load.d/ (Recommended)
+```bash
+# Create a config file for the module
+echo "split-keyboard" | sudo tee /etc/modules-load.d/split-keyboard.conf
+```
+
+#### Method 2: Using /etc/modules
+```bash
+# Add module name to /etc/modules (older method)
+echo "split-keyboard" | sudo tee -a /etc/modules
+```
+
+#### Method 3: Using modprobe.d with alias
+```bash
+# Create a config that loads module when USB device is detected
+echo 'alias usb:v04B4p0818d*dc*dsc*dp*ic*isc*ip*in* split-keyboard' | \
+  sudo tee /etc/modprobe.d/split-keyboard.conf
+```
+
+### Verify Installation
+```bash
+# Check if module is loaded
+lsmod | grep split_keyboard
+
+# Check module info
+modinfo split-keyboard
+
+# View module messages
+sudo dmesg | grep -i split
+```
+
+### Uninstall
+```bash
+# Remove module from memory
+sudo rmmod split_keyboard
+
+# Remove auto-load config
+sudo rm -f /etc/modules-load.d/split-keyboard.conf
+
+# Remove installed module
+sudo rm -f /lib/modules/$(uname -r)/extra/split-keyboard.ko
+sudo depmod -a
+```
+
 ## Notes
 - The driver automatically detects left/right keyboard based on USB device path
 - Each half maintains its own keymap
