@@ -143,13 +143,20 @@ int koolertron_48_map[] = {
 	/* KEY_X */45, 21, 44, 83, /*KEY_LEFT*/105, 106, 103, 108,
 };
 
+static int dev_num(const char *name)
+{
+	int n;
+	return sscanf(name, "input%d", &n) == 1 ? n : -1;
+}
+
 static int input_configured(struct hid_device *hid,
 		struct hid_input *hidinput)
 {
 	struct input_dev *id = hidinput->input;
 	struct usb_device *dev = hid_to_usb_dev(hid);
 	bool right = dev->devpath[strlen(dev->devpath) - 1] & 1;
-	printk("%s %s %d\n", __func__, dev->devpath, right);
+	printk("%s %s %s %d %d\n", __func__, dev_name(&id->dev), dev->devpath, right,
+	       dev_num(dev_name(&id->dev)));
 
 	for (int i = 0; i < ARRAY_SIZE(koolertron_48_map); i++) {
 		keymap[right][koolertron_48_map[i]] = keys[right][i];
