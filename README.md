@@ -51,6 +51,11 @@ The driver remaps the OEM keys to provide the following layouts:
 ### Double Shift → Caps Lock
 - Press both LEFT SHIFT and RIGHT SHIFT simultaneously to toggle Caps Lock
 
+### Dynamic macro - Ctrl+Alt+Enter
+- First Ctrl+Alt+Enter: start recording keystrokes
+- Enter: stop recording (Enter is included in the macro)
+- Subsequent Ctrl+Alt+Enter: replay recorded sequence
+
 ## Installation
 
 ### DKMS - auto-rebuilds on kernel updates
