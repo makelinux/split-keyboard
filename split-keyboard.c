@@ -93,6 +93,74 @@ static int macro(struct input_dev *id, int f, s32 value)
 
 u16 keymap[2][265];
 
+/* dm - dynamic macro:
+ * first Ctrl+Alt+Enter to record
+ * Enter to stop
+ * Ctrl+Alt+Enter again to replay
+ */
+
+#define DM_SIZE 256
+
+static struct {
+	struct { u16 key; u8 val; } buf[DM_SIZE];
+	int len;
+	bool rec, eat_rel, pending;
+	u8 mods;
+} dm;
+
+static bool dm_is_mod(u16 k)
+{
+	return k == KEY_LEFTCTRL || k == KEY_RIGHTCTRL ||
+	       k == KEY_LEFTALT || k == KEY_RIGHTALT;
+}
+
+static int dm_event(struct input_dev *id, u16 k, s32 value)
+{
+	if (dm_is_mod(k))
+		dm.mods = value ? dm.mods | (k == KEY_LEFTCTRL || k == KEY_RIGHTCTRL ? 1 : 2)
+		               : dm.mods & ~(k == KEY_LEFTCTRL || k == KEY_RIGHTCTRL ? 1 : 2);
+
+	if (k == KEY_ENTER && (dm.eat_rel || dm.pending)) {
+		if (!value)
+			dm.eat_rel = false;
+		return 1;
+	}
+	pr_devel("key %d %d rec %d dm.mods %d\n", k, value, dm.rec, dm.mods);
+
+	if (k == KEY_ENTER && value && (dm.mods & 3) == 3) {
+		pr_devel("dm: %s %d\n", dm.len ? "pending" : "rec", dm.len);
+		dm.eat_rel = true;
+		if (dm.len)
+			dm.pending = true;
+		else
+			dm.rec = true;
+		return 1;
+	}
+
+	if (dm.rec && dm.len < DM_SIZE && !dm_is_mod(k)) {
+		pr_devel("rec %d %d %d\n", dm.len, k, value);
+		dm.buf[dm.len++] = (typeof(dm.buf[0])){k, value};
+	}
+
+	if (k == KEY_ENTER && !value && dm.rec) {
+		pr_devel("dm: stop, %d keys\n", dm.len);
+		dm.rec = false;
+	}
+
+	if (!dm.pending || dm.mods)
+		return 0;
+
+	input_report_key(id, k, value);
+	input_sync(id);
+	dm.pending = false;
+	for (int i = 0; i < dm.len; i++) {
+		pr_devel("replay %d %d %d\n", i, dm.buf[i].key, dm.buf[i].val);
+		input_report_key(id, dm.buf[i].key, dm.buf[i].val);
+		input_sync(id);
+	}
+	return 1;
+}
+
 #define hid_to_usb_dev(hid_dev) \
 	to_usb_device(hid_dev->dev.parent->parent)
 
@@ -116,6 +184,9 @@ static int split_keyboard_event(struct hid_device *hid, struct hid_field *field,
 
 	if (k)
 		pr_devel("%d %d -> %d\n", u->code, value, k);
+
+	if (k && dm_event(id, k, value))
+		return 1;
 
 	handle_caps_lock(id, k, value);
 
