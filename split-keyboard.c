@@ -172,7 +172,6 @@ static int input_configured(struct hid_device *hid,
 	return 0;
 }
 
-
 static const struct hid_device_id split_keyboard_devices[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_CYPRESS, 0x0818) },
 	{ }
